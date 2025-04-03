@@ -330,13 +330,9 @@ function queryActiveCondition() {
   return activeCondition;
 }
 
-/**
- * prompt:
- * given an array of results_rating, `<input id="pid" type="number" value="1"
- />`, a variable called `condition`, when the user trigger `buttonSubmit()`
- event, save results_rating, pid, condition into a json file and let user
- download locally.
- */
+// Check if the URL has the 'copyToClipboard' parameter, default to true
+const copyToClipboard = !urlParams.has('copyToClipboard') || urlParams.get('copyToClipboard') === 'true';
+
 function buttonSubmit() {
   // Get data from inputs
   const pid = parseInt(document.getElementById('pid').value, 10);
@@ -358,4 +354,13 @@ function buttonSubmit() {
   a.href = URL.createObjectURL(blob);
   a.download = pid + '-' + condition + '.json';
   a.click();
+
+  // Copy to clipboard if the URL parameter is set
+  if (copyToClipboard) {
+    navigator.clipboard.writeText(jsonString).then(() => {
+      alert('Response copied to clipboard');
+    }).catch(err => {
+      console.error('Failed to copy to clipboard:', err);
+    });
+  }
 }
